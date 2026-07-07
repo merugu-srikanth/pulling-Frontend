@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { @apply box-border; }
+  html { @apply scroll-smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-slate-50 text-slate-800 antialiased;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-slate-100 p-6;
+  }
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+  }
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 text-white font-medium text-sm
+           hover:bg-brand-700 active:scale-95 transition-all duration-150 shadow-sm shadow-brand-200;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-700 font-medium text-sm
+           border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all duration-150;
+  }
+  .btn-danger {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-600 font-medium text-sm
+           border border-red-100 hover:bg-red-100 active:scale-95 transition-all duration-150;
+  }
+  .btn-success {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white font-medium text-sm
+           hover:bg-emerald-700 active:scale-95 transition-all duration-150 shadow-sm shadow-emerald-200;
+  }
+  .input {
+    @apply w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-sm
+           placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+           transition-all duration-150 bg-white;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-success { @apply badge bg-emerald-50 text-emerald-700; }
+  .badge-error   { @apply badge bg-red-50 text-red-600; }
+  .badge-warning { @apply badge bg-amber-50 text-amber-700; }
+  .badge-info    { @apply badge bg-blue-50 text-blue-700; }
+  .badge-gray    { @apply badge bg-slate-100 text-slate-600; }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent;
+  }
+  .bg-gradient-brand {
+    @apply bg-gradient-to-br from-brand-600 to-indigo-700;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Page transitions */
+.page-enter { animation: fadeIn 0.3s ease-out; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton loader */
+.skeleton {
+  @apply animate-pulse bg-slate-200 rounded-lg;
+}
+
+/* Table */
+.table-row-hover { @apply hover:bg-slate-50 transition-colors duration-100; }
