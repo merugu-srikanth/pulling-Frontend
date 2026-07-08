@@ -32,6 +32,15 @@ export const jobsAPI = {
       a.click();
       URL.revokeObjectURL(url);
     }),
+  exportNptel: () =>
+    API.get("/jobs/export/nptel", { responseType: "blob" }).then((res) => {
+      const url = URL.createObjectURL(res.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `nptel_courses_${Date.now()}.xlsx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }),
 };
 
 export const websitesAPI = {

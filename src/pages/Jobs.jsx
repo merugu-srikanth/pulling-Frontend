@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Search, Download, Trash2, Filter, X, AlertTriangle, FileSpreadsheet } from "lucide-react";
+import { Search, Download, Trash2, Filter, X, AlertTriangle, FileSpreadsheet, BookOpen } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import JobTable from "../components/JobTable";
@@ -67,6 +67,7 @@ export default function Jobs() {
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [exportingAicte, setExportingAicte] = useState(false);
+  const [exportingNptel, setExportingNptel] = useState(false);
   const [showDeleteAll, setShowDeleteAll] = useState(false);
   const [deleteAllLoading, setDeleteAllLoading] = useState(false);
 
@@ -153,6 +154,19 @@ export default function Jobs() {
     }
   };
 
+  const handleExportNptel = async () => {
+    setExportingNptel(true);
+    const tid = toast.loading("Generating NPTEL Excel...");
+    try {
+      await jobsAPI.exportNptel();
+      toast.success("NPTEL Excel downloaded!", { id: tid });
+    } catch {
+      toast.error("NPTEL export failed", { id: tid });
+    } finally {
+      setExportingNptel(false);
+    }
+  };
+
   const clearFilters = () => { setSearch(""); setSource(""); setPage(1); };
   const hasFilters = search || source;
 
@@ -207,6 +221,14 @@ export default function Jobs() {
             >
               <FileSpreadsheet size={14} />
               {exportingAicte ? "Exporting..." : source ? `AICTE: ${source.split(".")[0]}` : "AICTE Excel"}
+            </button>
+            <button
+              onClick={handleExportNptel}
+              disabled={exportingNptel}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 hover:text-violet-800 text-sm font-semibold border border-violet-200 hover:border-violet-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <BookOpen size={14} />
+              {exportingNptel ? "Exporting..." : "NPTEL Excel"}
             </button>
             <button
               onClick={() => setShowDeleteAll(true)}
