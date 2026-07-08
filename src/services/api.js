@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API = axios.create({ baseURL: "/api" });
+const BASE_URL = import.meta.env.VITE_API_URL || "https://apiscraping-xi.vercel.app";
+
+const API = axios.create({ baseURL: `${BASE_URL}/api` });
 
 export const statsAPI = {
   get: () => API.get("/stats"),
