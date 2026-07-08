@@ -9,6 +9,9 @@ export default function App() {
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
       <Sidebar />
+
+
+      
       <div className="flex-1 flex flex-col ml-64 overflow-y-auto scrollbar-thin">
         <Routes>
           <Route path="/"          element={<Dashboard />} />
