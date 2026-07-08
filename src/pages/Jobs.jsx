@@ -63,6 +63,7 @@ export default function Jobs() {
   const [limit] = useState(20);
   const [search, setSearch] = useState("");
   const [source, setSource] = useState("");
+  const [sources, setSources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [exportingAicte, setExportingAicte] = useState(false);
@@ -83,6 +84,10 @@ export default function Jobs() {
   }, [search, source, page, limit]);
 
   useEffect(() => { fetchJobs(); }, [fetchJobs]);
+
+  useEffect(() => {
+    jobsAPI.getSources().then(res => setSources(res.data)).catch(() => {});
+  }, []);
 
   const handleDelete = async (id) => {
     try {
@@ -122,10 +127,11 @@ export default function Jobs() {
 
   const handleExport = async () => {
     setExporting(true);
-    const tid = toast.loading("Generating Excel file...");
+    const label = source ? `"${source}"` : "all";
+    const tid = toast.loading(`Generating Excel for ${label}...`);
     try {
-      await jobsAPI.exportExcel();
-      toast.success("Excel downloaded!", { id: tid });
+      await jobsAPI.exportExcel(source);
+      toast.success(`Excel downloaded (${label})!`, { id: tid });
     } catch {
       toast.error("Export failed", { id: tid });
     } finally {
@@ -135,10 +141,11 @@ export default function Jobs() {
 
   const handleExportAicte = async () => {
     setExportingAicte(true);
-    const tid = toast.loading("Generating AICTE Excel...");
+    const label = source ? `"${source}"` : "all";
+    const tid = toast.loading(`Generating AICTE Excel for ${label}...`);
     try {
-      await jobsAPI.exportAicte();
-      toast.success("AICTE Excel downloaded!", { id: tid });
+      await jobsAPI.exportAicte(source);
+      toast.success(`AICTE Excel downloaded (${label})!`, { id: tid });
     } catch {
       toast.error("AICTE export failed", { id: tid });
     } finally {
@@ -172,12 +179,16 @@ export default function Jobs() {
           </div>
           <div className="relative">
             <Filter size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            <input
-              className="input pl-8 w-44"
-              placeholder="Filter by source"
+            <select
+              className="input pl-8 w-52 appearance-none pr-8"
               value={source}
               onChange={(e) => { setSource(e.target.value); setPage(1); }}
-            />
+            >
+              <option value="">All Sources</option>
+              {sources.map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
           </div>
           {hasFilters && (
             <button onClick={clearFilters} className="btn-secondary">
@@ -187,7 +198,7 @@ export default function Jobs() {
           <div className="ml-auto flex items-center gap-2">
             <button onClick={handleExport} disabled={exporting} className="btn-success">
               <Download size={14} />
-              {exporting ? "Exporting..." : "Export Excel"}
+              {exporting ? "Exporting..." : source ? `Export: ${source.split(".")[0]}` : "Export Excel"}
             </button>
             <button
               onClick={handleExportAicte}
@@ -195,7 +206,7 @@ export default function Jobs() {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 text-sm font-semibold border border-emerald-200 hover:border-emerald-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FileSpreadsheet size={14} />
-              {exportingAicte ? "Exporting..." : "AICTE Excel"}
+              {exportingAicte ? "Exporting..." : source ? `AICTE: ${source.split(".")[0]}` : "AICTE Excel"}
             </button>
             <button
               onClick={() => setShowDeleteAll(true)}

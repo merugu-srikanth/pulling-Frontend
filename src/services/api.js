@@ -10,24 +10,25 @@ export const statsAPI = {
 
 export const jobsAPI = {
   getAll: (params) => API.get("/jobs", { params }),
+  getSources: () => API.get("/jobs/sources"),
   delete: (id) => API.delete(`/jobs/${id}`),
   deleteMany: (ids) => API.delete("/jobs/bulk", { data: { ids } }),
   deleteAll: () => API.delete("/jobs/all"),
-  exportExcel: () =>
-    API.get("/jobs/export", { responseType: "blob" }).then((res) => {
+  exportExcel: (source = "") =>
+    API.get("/jobs/export", { params: source ? { source } : {}, responseType: "blob" }).then((res) => {
       const url = URL.createObjectURL(res.data);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `jobs_${Date.now()}.xlsx`;
+      a.download = `jobs_${source ? source.replace(/[^a-z0-9]/gi, "_") + "_" : ""}${Date.now()}.xlsx`;
       a.click();
       URL.revokeObjectURL(url);
     }),
-  exportAicte: () =>
-    API.get("/jobs/export/aicte", { responseType: "blob" }).then((res) => {
+  exportAicte: (source = "") =>
+    API.get("/jobs/export/aicte", { params: source ? { source } : {}, responseType: "blob" }).then((res) => {
       const url = URL.createObjectURL(res.data);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `aicte_internships_${Date.now()}.xlsx`;
+      a.download = `aicte_internships_${source ? source.replace(/[^a-z0-9]/gi, "_") + "_" : ""}${Date.now()}.xlsx`;
       a.click();
       URL.revokeObjectURL(url);
     }),
