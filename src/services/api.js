@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "https://apicareerpull.vercel.app";
-// const BASE_URL = "http://localhost:5000";
+// const BASE_URL = import.meta.env.VITE_API_URL || "https://apicareerpull.vercel.app";
+const BASE_URL = "http://localhost:5000";
 
 const API = axios.create({ baseURL: `${BASE_URL}/api` });
 
@@ -47,6 +47,7 @@ export const jobsAPI = {
 export const websitesAPI = {
   getAll: () => API.get("/websites"),
   add: (data) => API.post("/websites", data),
+  update: (id, data) => API.patch(`/websites/${id}`, data),
   delete: (id) => API.delete(`/websites/${id}`),
   upload: (file) => {
     const form = new FormData();

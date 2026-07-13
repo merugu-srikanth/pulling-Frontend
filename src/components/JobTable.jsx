@@ -136,6 +136,19 @@ function JobModal({ job, onClose }) {
           <span className="badge badge-gray"><Globe size={9} />{job.source}</span>
         </div>
         <div className="flex-1 overflow-y-auto px-6 py-1 scrollbar-thin">
+          {job.isUpdated && job.updatedFields?.length > 0 && (
+            <div className="my-3 px-3 py-2.5 rounded-xl bg-amber-50 border border-amber-200">
+              <p className="text-[10px] font-bold text-amber-700 uppercase tracking-wider mb-1.5">Dates Updated</p>
+              {job.updatedFields.map(f => (
+                <div key={f} className="flex items-center gap-2 text-xs mb-1">
+                  <span className="font-semibold text-amber-800 capitalize">{f.replace(/([A-Z])/g, " $1")}:</span>
+                  <span className="line-through text-slate-400">{job.previousValues?.[f] || "—"}</span>
+                  <span className="text-amber-600">→</span>
+                  <span className="font-semibold text-amber-900">{job[f]}</span>
+                </div>
+              ))}
+            </div>
+          )}
           <DetailRow icon={Building2}     label="Organization"     value={job.organization} />
           <DetailRow icon={GraduationCap} label="Qualification"    value={job.qualification} />
           <DetailRow icon={Hash}          label="Vacancies"        value={job.vacancies > 0 ? job.vacancies.toLocaleString() : null} />
@@ -365,7 +378,9 @@ export default function JobTable({ jobs, loading, total, page, limit, onPage, on
                         "group cursor-pointer transition-colors duration-100",
                         isSelected
                           ? "bg-brand-50/60 hover:bg-brand-50"
-                          : "hover:bg-slate-50"
+                          : job.isUpdated
+                            ? "bg-amber-50/70 hover:bg-amber-50"
+                            : "hover:bg-slate-50"
                       )}
                     >
                       {/* Row checkbox */}
@@ -375,7 +390,14 @@ export default function JobTable({ jobs, loading, total, page, limit, onPage, on
 
                       {/* Job Title */}
                       <td className="px-4 py-3.5">
-                        <p className="font-semibold text-slate-800 line-clamp-2 leading-snug text-xs max-w-[220px]">{job.title}</p>
+                        <div className="flex items-start gap-1.5 max-w-[220px]">
+                          <p className="font-semibold text-slate-800 line-clamp-2 leading-snug text-xs">{job.title}</p>
+                          {job.isUpdated && (
+                            <span className="flex-shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-200 text-amber-800 mt-0.5">
+                              UPDATED
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Organization */}

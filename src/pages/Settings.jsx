@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Save, Clock, RotateCcw, Database, Calendar, Repeat2, AlarmClock } from "lucide-react";
+import { Save, Clock, RotateCcw, Database, Calendar, Repeat2, AlarmClock, Globe, CheckSquare, Square } from "lucide-react";
 import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
-import { settingsAPI } from "../services/api";
+import { settingsAPI, websitesAPI } from "../services/api";
 
 /* ─── Toggle ──────────────────────────────────────────────────────────────── */
 function Toggle({ checked, onChange, disabled }) {
@@ -274,16 +274,77 @@ function ScheduleBuilder({ cronExpression, onChange }) {
   );
 }
 
+/* ─── Website Auto-Scrape Toggle ──────────────────────────────────────────── */
+function WebsiteToggleRow({ site, onToggle }) {
+  const [loading, setLoading] = useState(false);
+  const enabled = site.autoScrape !== false;
+
+  const handle = async () => {
+    setLoading(true);
+    try {
+      await onToggle(site.id, !enabled);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className={`flex items-center justify-between px-4 py-3 rounded-xl border transition-colors ${
+      enabled ? "bg-brand-50/40 border-brand-100" : "bg-slate-50 border-slate-100"
+    }`}>
+      <div className="flex items-center gap-3 min-w-0">
+        <button
+          type="button"
+          onClick={handle}
+          disabled={loading}
+          className="flex-shrink-0"
+        >
+          {enabled
+            ? <CheckSquare size={16} className="text-brand-600" />
+            : <Square size={16} className="text-slate-300" />}
+        </button>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-slate-700 truncate">{site.name}</p>
+          <p className="text-[10px] text-slate-400 font-mono truncate">{site.url}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+        {site.status === "error" && (
+          <span className="text-[10px] font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded-full">error</span>
+        )}
+        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+          enabled ? "bg-brand-100 text-brand-700" : "bg-slate-200 text-slate-500"
+        }`}>
+          {enabled ? "included" : "excluded"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Settings Page ──────────────────────────────────────────────────── */
 export default function Settings() {
   const [config, setConfig] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [websites, setWebsites] = useState([]);
 
   useEffect(() => {
     settingsAPI.get()
       .then(res => setConfig(res.data))
       .catch(() => toast.error("Failed to load settings"));
+    websitesAPI.getAll()
+      .then(res => setWebsites(res.data))
+      .catch(() => {});
   }, []);
+
+  const handleToggleAutoScrape = async (id, autoScrape) => {
+    try {
+      await websitesAPI.update(id, { autoScrape });
+      setWebsites(prev => prev.map(w => w.id === id ? { ...w, autoScrape } : w));
+    } catch {
+      toast.error("Failed to update website");
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -347,6 +408,43 @@ export default function Settings() {
             )}
           </Section>
 
+          {/* ── Website Selection ───────────────────────────────────────── */}
+          <Section icon={Globe} title="Websites for Auto-Scraping" description="Select which websites are included when auto-scrape runs">
+            {websites.length === 0 ? (
+              <p className="text-xs text-slate-400 text-center py-4">No websites added yet</p>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs text-slate-500">
+                    <span className="font-semibold text-brand-600">{websites.filter(w => w.autoScrape !== false).length}</span>
+                    {" "}of{" "}
+                    <span className="font-semibold">{websites.length}</span>
+                    {" "}websites selected
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      className="text-xs px-2.5 py-1 rounded-lg bg-brand-50 text-brand-700 font-semibold hover:bg-brand-100 transition-colors"
+                      onClick={() => websites.forEach(w => handleToggleAutoScrape(w.id, true))}
+                    >
+                      Select All
+                    </button>
+                    <button
+                      className="text-xs px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-semibold hover:bg-slate-200 transition-colors"
+                      onClick={() => websites.forEach(w => handleToggleAutoScrape(w.id, false))}
+                    >
+                      Deselect All
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+                  {websites.map(site => (
+                    <WebsiteToggleRow key={site.id} site={site} onToggle={handleToggleAutoScrape} />
+                  ))}
+                </div>
+              </>
+            )}
+          </Section>
+
           {/* ── Retry Settings ──────────────────────────────────────────── */}
           <Section icon={RotateCcw} title="Retry Settings" description="Configure how failed requests are handled">
             <div className="grid grid-cols-2 gap-4">
@@ -372,20 +470,20 @@ export default function Settings() {
           </Section>
 
           {/* ── Storage Info ─────────────────────────────────────────────── */}
-          <Section icon={Database} title="Storage" description="JSON file storage configuration">
-            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50">
+          <Section icon={Database} title="Storage" description="Database configuration">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50 border border-emerald-100">
               <div className="flex items-center gap-3">
-                <Database size={14} className="text-slate-400" />
+                <Database size={14} className="text-emerald-600" />
                 <div>
                   <p className="text-xs font-semibold text-slate-700">Storage Mode</p>
-                  <p className="text-[10px] text-slate-400">JSON Files (No Database)</p>
+                  <p className="text-[10px] text-slate-400">MongoDB Atlas (Cloud Database)</p>
                 </div>
               </div>
-              <span className="badge badge-success">Active</span>
+              <span className="badge badge-success">Connected</span>
             </div>
-            <p className="text-xs text-slate-500 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5">
-              All data is stored in <code className="font-mono text-amber-700">src/data/</code> as JSON files.
-              Migrate to MongoDB or PostgreSQL when you need advanced querying.
+            <p className="text-xs text-slate-500 bg-brand-50 border border-brand-100 rounded-xl px-3 py-2.5">
+              All data (jobs, websites, logs) is stored in <code className="font-mono text-brand-700">MongoDB Atlas</code>.
+              Duplicate jobs are automatically filtered and date changes are highlighted.
             </p>
           </Section>
 
