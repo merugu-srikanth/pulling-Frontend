@@ -4,7 +4,7 @@ import {
   Copy, Check, Eye, X, Building2, GraduationCap,
   Calendar, Globe, Hash, Clock, Link, CheckSquare,
   Square, MinusSquare, AlertTriangle, MapPin,
-  Banknote, Timer, Briefcase, CalendarCheck
+  Banknote, Timer, Briefcase, CalendarCheck, BookOpen
 } from "lucide-react";
 import clsx from "clsx";
 import { toast } from "react-hot-toast";
@@ -147,6 +147,21 @@ function JobModal({ job, onClose }) {
           {job.internshipType && <DetailRow icon={Briefcase}    label="Type"             value={job.internshipType} />}
           {job.startDate      && <DetailRow icon={CalendarCheck} label="Start Date"      value={job.startDate} />}
           {job.postedDate     && <DetailRow icon={Clock}        label="Posted On"        value={job.postedDate} />}
+          {/* NPTEL-specific fields */}
+          {job.source === "nptel.ac.in" && <>
+            {job.courseDuration  && <DetailRow icon={Calendar}      label="Course Duration"      value={job.courseDuration} />}
+            {job.enrollmentStart && <DetailRow icon={CalendarCheck} label="Enrollment Start Date" value={job.enrollmentStart} />}
+            {job.enrollmentEnd   && <DetailRow icon={CalendarCheck} label="Enrollment End Date"   value={job.enrollmentEnd} />}
+            {job.examRegStart    && <DetailRow icon={CalendarCheck} label="Exam Reg. Start Date"  value={job.examRegStart} />}
+            {job.examRegEnd      && <DetailRow icon={CalendarCheck} label="Exam Reg. End Date"    value={job.examRegEnd} />}
+            {job.examDate        && <DetailRow icon={Calendar}      label="Exam Date"             value={job.examDate} />}
+            {job.credits         && <DetailRow icon={Hash}          label="Credits"              value={job.credits} />}
+            {job.level           && <DetailRow icon={GraduationCap} label="Level"                value={job.level} />}
+            {job.language        && <DetailRow icon={Globe}         label="Language"             value={job.language} />}
+            {job.courseType      && <DetailRow icon={Briefcase}     label="Course Type"          value={job.courseType} />}
+            {job.discipline      && <DetailRow icon={BookOpen}      label="Discipline"           value={job.discipline} />}
+            {job.professor       && <DetailRow icon={Building2}     label="Professor"            value={job.professor} />}
+          </>}
           <DetailRow icon={Globe}         label="Source Website"   value={job.source} />
           <DetailRow icon={Clock}         label="Scraped At"
             value={job.scrapedAt ? new Date(job.scrapedAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : null} />
