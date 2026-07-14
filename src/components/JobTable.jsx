@@ -160,6 +160,12 @@ function JobModal({ job, onClose }) {
           {job.internshipType && <DetailRow icon={Briefcase}    label="Type"             value={job.internshipType} />}
           {job.startDate      && <DetailRow icon={CalendarCheck} label="Start Date"      value={job.startDate} />}
           {job.postedDate     && <DetailRow icon={Clock}        label="Posted On"        value={job.postedDate} />}
+          {/* PM Internship specific */}
+          {job.source === "pminternship.mca.gov.in" && <>
+            {job.pmInsurance    && <DetailRow icon={Briefcase}    label="Insurance"              value={job.pmInsurance} />}
+            {job.pmTransport    && <DetailRow icon={MapPin}       label="Transportation Support"  value={job.pmTransport} />}
+            {job.pmHealthBenefits && <DetailRow icon={BookOpen}   label="Health Benefits"        value={job.pmHealthBenefits} />}
+          </>}
           {/* NPTEL-specific fields */}
           {job.source === "nptel.ac.in" && <>
             {job.courseDuration  && <DetailRow icon={Calendar}      label="Course Duration"      value={job.courseDuration} />}
