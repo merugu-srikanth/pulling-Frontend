@@ -81,7 +81,7 @@ export default function Login({ onLoginSuccess }) {
                 type="email"
                 required
                 placeholder="admin@company.com"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-850/50 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition font-sans"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-700 rounded-xl text-sm text-black placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition font-sans"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -99,7 +99,7 @@ export default function Login({ onLoginSuccess }) {
                 type={showPassword ? "text" : "password"}
                 required
                 placeholder="••••••••"
-                className="w-full pl-10 pr-10 py-2.5 bg-slate-850/50 border border-slate-700 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition font-sans"
+                className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-700 rounded-xl text-sm text-black placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition font-sans"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />

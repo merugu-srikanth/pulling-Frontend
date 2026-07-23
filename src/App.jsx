@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
@@ -70,7 +71,15 @@ function HomeRedirect() {
 }
 
 export default function App() {
-  const token = localStorage.getItem("adminToken");
+  const [token, setToken] = useState(localStorage.getItem("adminToken"));
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      setToken(localStorage.getItem("adminToken"));
+    };
+    window.addEventListener("authChanged", handleAuthChange);
+    return () => window.removeEventListener("authChanged", handleAuthChange);
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
