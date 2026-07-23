@@ -5,6 +5,16 @@ const BASE_URL = import.meta.env.VITE_API_URL || "https://apicareerpull.vercel.a
 
 const API = axios.create({ baseURL: `${BASE_URL}/api` });
 
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("adminToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 export const statsAPI = {
   get: () => API.get("/stats"),
 };
