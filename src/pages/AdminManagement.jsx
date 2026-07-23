@@ -270,7 +270,7 @@ export default function AdminManagement() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {admins.map((admin) => {
-                    const isPrimarySuperAdmin = admin.email === "superadmin@company.com";
+                    const isPrimarySuperAdmin = admin.email === "srikanthmerugu04@gmail.com";
                     return (
                       <tr key={admin._id} className="hover:bg-slate-50/55 transition">
                         <td className="px-5 py-4">

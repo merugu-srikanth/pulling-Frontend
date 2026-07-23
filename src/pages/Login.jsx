@@ -64,8 +64,8 @@ export default function Login({ onLoginSuccess }) {
           <AlertCircle className="w-5 h-5 text-indigo-400 flex-shrink-0 mt-0.5" />
           <div className="text-xs text-slate-400 font-sans space-y-1">
             <p className="font-bold text-slate-300">Default Super Admin Account:</p>
-            <p>Email: <span className="font-mono text-indigo-300 font-semibold select-all">superadmin@company.com</span></p>
-            <p>Password: <span className="font-mono text-indigo-300 font-semibold select-all">Password@123</span></p>
+            <p>Email: <span className="font-mono text-indigo-300 font-semibold select-all">srikanthmerugu04@gmail.com</span></p>
+            <p>Password: <span className="font-mono text-indigo-300 font-semibold select-all">SuperAdmin</span></p>
           </div>
         </div>
 
